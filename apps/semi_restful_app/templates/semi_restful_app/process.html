@@ -12,8 +12,9 @@
             width: 700px;
         }
 
-
-
+        .error-message {
+            color: red;
+        }
     </style>
     <title>Create</title>
 </head>
@@ -21,8 +22,8 @@
 <body>
     <div class="container border p-5 mt-5 shadow-lg" style="height: 650px;">
         <div class="row">
-                <h1 class="text-center mx-auto font-weight-bold">Add a New Show</h1>
-                <a href="/shows" class="col text-right">Go Back</a>
+            <h1 class="text-center mx-auto font-weight-bold">Add a New Show</h1>
+            <a href="/shows" class="col text-right">Go Back</a>
         </div>
         <form action="/process_form" method="post">
             {% csrf_token %}
@@ -47,6 +48,15 @@
             <input type="submit" class="btn btn-primary btn-block" value="Create">
 
         </form>
+        <div class="error-message">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li>{% if message.tags %}{% endif %}{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
     </div>
 </body>
 

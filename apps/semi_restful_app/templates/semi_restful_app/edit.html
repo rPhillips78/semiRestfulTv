@@ -12,6 +12,10 @@
             width: 700px;
         }
 
+        .error-message{
+            color:red;
+        }
+
 
 
     </style>
@@ -42,11 +46,20 @@
             </div>
             <div class="form-group">
                 <label for="desc">Description</label>
-                <textarea class="form-control" name="desc" rows="5" value="{{show.description}}"></textarea>
+                <textarea class="form-control" name="desc" rows="5">{{show.description}}</textarea>
             </div>
             <input type="submit" class="btn btn-primary btn-block" value="Update">
 
         </form>
+            <div class="error-message">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li>{% if message.tags %}{% endif %}{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
     </div>
 </body>
 

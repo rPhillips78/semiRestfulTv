@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
+from django.contrib import messages
 
 def index(request):
     all_shows = Show.objects.all()
@@ -9,9 +10,16 @@ def index(request):
     return render(request, 'semi_restful_app/index.html', context)
 
 def process(request):
-    Show.objects.create(title=request.POST['title'], network=request.POST['network'], release_date=request.POST['release'], description=request.POST['desc'])
-    last_show = Show.objects.last()
-    return redirect('/shows/' + str(last_show.id))
+    errors = Show.objects.valid_meth(request.POST)
+
+    if len(errors) > 0:
+        for key, val in errors.items():
+            messages.error(request, val)
+        return redirect('/shows/new')
+    else:
+        Show.objects.create(title=request.POST['title'], network=request.POST['network'], release_date=request.POST['release'], description=request.POST['desc'])
+        last_show = Show.objects.last()
+        return redirect('/shows/' + str(last_show.id))
 
 def new_show(request):
     return render(request, 'semi_restful_app/process.html')
@@ -32,13 +40,20 @@ def edit(request, show_id):
     return render(request, 'semi_restful_app/edit.html', context)
 
 def process_edit(request, show_id):
-    show_edit = Show.objects.get(id=show_id)
-    show_edit.title = request.POST['title']
-    show_edit.network = request.POST['network']
-    show_edit.release_date = request.POST['release']
-    show_edit.description = request.POST['desc']
-    show_edit.save()
-    return redirect('/shows/' + str(show_id))
+    errors = Show.objects.valid_meth(request.POST)
+
+    if len(errors) > 0:
+        for key, val in errors.items():
+            messages.error(request, val)
+        return redirect('/shows/' + str(show_id) + '/edit')
+    else: 
+        show_edit = Show.objects.get(id=show_id)
+        show_edit.title = request.POST['title']
+        show_edit.network = request.POST['network']
+        show_edit.release_date = request.POST['release']
+        show_edit.description = request.POST['desc']
+        show_edit.save()
+        return redirect('/shows/' + str(show_id))
 
 def destroy(request, show_id):
     show_gone = Show.objects.get(id=show_id)
